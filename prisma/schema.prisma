@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Donors {
+  phone        String   @id @unique
+  name         String
+  age          Int
+  address      String?
+  bloodGroup   String
+  healthStatus String?
+  lastGiven    DateTime @default(now())
+  records      Record[]
+
+  @@map("donors")
+}
+
+model Patients {
+  phone        String   @id @unique
+  name         String
+  age          Int
+  address      String?
+  bloodGroup   String
+  healthStatus String?
+  records      Record[]
+
+  @@map("patients")
+}
+
+model Record {
+  d_phone String   @unique
+  donor   Donors   @relation(fields: [d_phone], references: [phone])
+  p_phone String   @unique
+  patient Patients @relation(fields: [p_phone], references: [phone])
+  date    DateTime @default(now())
+
+  @@map("records")
+}
